@@ -16,6 +16,22 @@ snap refresh microk8s --channel=1.28 && reboot
 microk8s kubectl uncordon <node>
 ```
 
+## NFS CSI Driver
+https://microk8s.io/docs/how-to-nfs#install-the-csi-driver-for-nfs-2
+```bash
+microk8s enable helm3
+microk8s helm3 repo add csi-driver-nfs https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
+microk8s helm3 repo update
+
+microk8s helm3 install csi-driver-nfs csi-driver-nfs/csi-driver-nfs \
+    --namespace kube-system \
+    --set kubeletDir=/var/snap/microk8s/common/var/lib/kubelet
+
+microk8s kubectl wait pod --selector app.kubernetes.io/name=csi-driver-nfs --for condition=ready --namespace kube-system
+
+microk8s kubectl apply -f ./NFS/sc-nfs.yaml
+```
+
 ## MetalLB
 https://microk8s.io/docs/addon-metallb
 ```bash
