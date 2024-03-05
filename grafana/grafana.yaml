@@ -4,6 +4,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: grafana-pvc
+  namespace: crypto
 spec:
   storageClassName: nfs-csi
   accessModes:
