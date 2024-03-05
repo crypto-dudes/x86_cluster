@@ -86,7 +86,7 @@ spec:
   sessionAffinity: None
   # loadBalancerIP is optional. MetalLB will automatically allocate an IP 
   # from its pool if not specified. You can also specify one manually.
-  loadBalancerIP: 172.16.0.101
+  loadBalancerIP: 172.16.0.200
   ports:
     - port: 80
       protocol: TCP
