@@ -41,3 +41,8 @@ microk8s enable metallb:172.16.0.200-172.16.0.250
 ## Prometheus
 https://www.server-world.info/en/note?os=Ubuntu_20.04&p=microk8s&f=8
 
+## Nvidia GPU Time Slicing
+https://microk8s.io/docs/addon-gpu
+https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/overview.html
+
+
