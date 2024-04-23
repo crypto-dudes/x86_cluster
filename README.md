@@ -45,4 +45,57 @@ https://www.server-world.info/en/note?os=Ubuntu_20.04&p=microk8s&f=8
 https://microk8s.io/docs/addon-gpu
 https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/overview.html
 
+# Kubernetes Secrets for use by Services
 
+## InfluxDB
+
+```bash
+ kubectl -n crypto create secret generic influxcred \
+    --from-literal=url="http://influxdb.home.diecksystems.com:8086" \
+    --from-literal=token='CHANGEME'
+```
+
+```bash
+kubectl -n crypto create secret generic init-influxdb2-cred \
+  --from-literal=username="admin" \
+  --from-literal=password="CHANGEME" \
+  --from-literal=org="crypto" \
+  --from-literal=bucket="1inch-dev" \
+  --from-literal=retention="10y" \
+  --from-literal=admin-token="CHANGEME"
+```
+
+## Redis
+
+```bash
+ kubectl -n crypto create secret generic rediscred \
+  --from-literal=host="redis.home.diecksystems.com" \
+  --from-literal=port="6379" \
+  --from-literal=database="0" \
+  --from-literal=username="default" \
+  --from-literal=password="CHANGEME"
+```
+
+## Github
+
+```bash
+kubectl -n crypto create secret generic ghcrcred \
+    --type=kubernetes.io/dockerconfigjson \
+    --from-file=.dockerconfigjson=$HOME/Code/x86_cluster/ghcr.json
+```
+
+## 1inch
+Comma separated list of API keys
+
+```bash
+kubectl -n crypto create secret generic oneinch-creds \
+  --from-literal=tokens="[API TOKENS]" \
+  --from-literal=url="https://api.1inch.dev"
+```
+
+## Wallet
+```bash
+ kubectl -n crypto create secret generic wallet-address-dev \
+  --from-literal=address="[HEX ADDRESS]" \
+  --from-literal=key="[PRIVATE KEY]"
+```
