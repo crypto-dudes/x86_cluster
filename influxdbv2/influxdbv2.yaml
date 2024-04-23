@@ -1,0 +1,132 @@
+# influxdbv2.yaml
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: influxdbv2-pvc
+  namespace: crypto
+spec:
+  storageClassName: nfs-csi
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 40Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: influxdbv2
+    namespace: crypto
+  name: influxdbv2
+spec:
+  selector:
+    matchLabels:
+      app: influxdbv2
+      namespace: crypto
+  template:
+    metadata:
+      labels:
+        app: influxdbv2
+        namespace: crypto
+    spec:
+      securityContext:
+        fsGroup: 472
+        supplementalGroups:
+          - 0
+      containers:
+        - name: influxdbv2
+          image: public.ecr.aws/docker/library/influxdb:2.7.5
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8086
+              name: http-influxdbv2
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: "/health"
+              port: 8086
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 2
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8086
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 4.0
+              memory: 4Gi
+          env:
+          - name: SERVICE_NAME
+            value: influxdb2
+          - name: SERVICE_ENVIRONMENT
+            value: prod
+          - name: LOG_LEVEL
+            value: WARN
+          - name: DOCKER_INFLUXDB_INIT_MODE
+            value: setup
+          - name: DOCKER_INFLUXDB_INIT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: init-influxdb2-cred
+                key: username
+          - name: DOCKER_INFLUXDB_INIT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: init-influxdb2-cred
+                key: password
+          - name: DOCKER_INFLUXDB_INIT_ORG
+            valueFrom:
+              secretKeyRef:
+                name: init-influxdb2-cred
+                key: org
+          - name: DOCKER_INFLUXDB_INIT_BUCKET
+            valueFrom:
+              secretKeyRef:
+                name: init-influxdb2-cred
+                key: bucket
+          - name: DOCKER_INFLUXDB_INIT_RETENTION
+            valueFrom:
+              secretKeyRef:
+                name: init-influxdb2-cred
+                key: retention
+          - name: DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: init-influxdb2-cred
+                key: admin-token
+          volumeMounts:
+            - mountPath: /var/lib/influxdb2
+              name: influxdbv2-storage
+      volumes:
+        - name: influxdbv2-storage
+          persistentVolumeClaim:
+            claimName: influxdbv2-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdbv2
+  namespace: crypto
+spec:
+  selector:
+    app: influxdbv2
+    namespace: crypto
+  type: LoadBalancer
+  sessionAffinity: None
+  # loadBalancerIP is optional. MetalLB will automatically allocate an IP 
+  # from its pool if not specified. You can also specify one manually.
+  loadBalancerIP: 172.16.0.201
+  ports:
+    - port: 8086
+      protocol: TCP
+      targetPort: http-influxdbv2
