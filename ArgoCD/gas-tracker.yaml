@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: ghcr.io/crypto-dudes/gas-tracker:latest
+  name: Gas-Tracker
+spec:
+  destination:
+    name: ''
+    namespace: crypto
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: kubernetes-manifests
+    repoURL: 'https://github.com/crypto-dudes/gas-tracker.git'
+    targetRevision: HEAD
+  sources: []
+  project: crypto

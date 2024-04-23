@@ -46,3 +46,12 @@ https://microk8s.io/docs/addon-gpu
 https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/overview.html
 
 
+## ArgoCD - Continuous Deployment
+https://argo-cd.readthedocs.io/en/stable/getting_started/
+
+```bash
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+kubectl -n argocd patch svc argocd-server --patch-file ./ArgoCD/argocd.yaml
+```
