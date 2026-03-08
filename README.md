@@ -50,26 +50,42 @@ https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/overview.htm
 ## InfluxDB
 
 ```bash
- kubectl -n defi-bot create secret generic influxcred \
-    --from-literal=url="http://influxdb.home.diecksystems.com:8086" \
-    --from-literal=token='CHANGEME'
+kubectl -n defi-bot create secret generic influxcred \
+  --from-literal=url="http://influxdb.home.diecksystems.com:8086" \
+  --from-literal=namespace_url="http://influxdbv2:8086" \
+  --from-literal=token='CHANGEME'
 ```
 
 ```bash
 kubectl -n defi-bot create secret generic init-influxdb2-cred \
+  --from-literal=url="http://influxdb.home.diecksystems.com:8086" \
+  --from-literal=namespace_url="http://influxdbv2:8086" \
   --from-literal=username="admin" \
   --from-literal=password="CHANGEME" \
   --from-literal=org="defi-bot" \
   --from-literal=bucket="defi_trading" \
-  --from-literal=retention="10y" \
+  --from-literal=retention="3660d" \
   --from-literal=admin-token="CHANGEME"
+```
+
+## MariaDB
+
+```bash
+kubectl -n defi-bot create secret generic init-mariadb-cred \
+  --from-literal=host="mariadb.home.diecksystems.com" \
+  --from-literal=namespace_host="mariadb" \
+  --from-literal=port="3306" \
+  --from-literal=database="defi-bot" \
+  --from-literal=username="root" \
+  --from-literal=password="CHANGEME" \
 ```
 
 ## Redis
 
 ```bash
- kubectl -n defi-bot create secret generic rediscred \
+kubectl -n defi-bot create secret generic rediscred \
   --from-literal=host="redis.home.diecksystems.com" \
+  --from-literal=namespace_host="redis" \
   --from-literal=port="6379" \
   --from-literal=database="0" \
   --from-literal=username="default" \
@@ -80,8 +96,8 @@ kubectl -n defi-bot create secret generic init-influxdb2-cred \
 
 ```bash
 kubectl -n defi-bot create secret generic ghcrcred \
-    --type=kubernetes.io/dockerconfigjson \
-    --from-file=.dockerconfigjson=$HOME/Code/x86_cluster/ghcr.json
+  --type=kubernetes.io/dockerconfigjson \
+  --from-file=.dockerconfigjson=$HOME/Code/x86_cluster/ghcr.json
 ```
 
 ## 1inch
