@@ -1,0 +1,88 @@
+# mariadb.yaml
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mariadb-pvc
+  namespace: defi-bot
+spec:
+  storageClassName: nfs-csi
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mariadb
+    namespace: defi-bot
+  name: mariadb
+spec:
+  selector:
+    matchLabels:
+      app: mariadb
+      namespace: defi-bot
+  template:
+    metadata:
+      labels:
+        app: mariadb
+        namespace: defi-bot
+    spec:
+      securityContext:
+        fsGroup: 999
+        supplementalGroups:
+          - 0
+      containers:
+        - name: mariadb
+          image: public.ecr.aws/docker/library/mariadb:lts
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3306
+              name: mysql-mariadb
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 2
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 2
+          env:
+            - name: MARIADB_ROOT_PASSWORD
+              value: "example-root-password"
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mariadb-storage
+      volumes:
+        - name: mariadb-storage
+          persistentVolumeClaim:
+            claimName: mariadb-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb
+  namespace: defi-bot
+spec:
+  selector:
+    app: mariadb
+    namespace: defi-bot
+  type: LoadBalancer
+  sessionAffinity: None
+  # loadBalancerIP is optional. MetalLB will automatically allocate an IP 
+  # from its pool if not specified. You can also specify one manually.
+  loadBalancerIP: 172.16.0.203
+  ports:
+    - port: 3306
+      protocol: TCP
+      targetPort: mysql-mariadb
