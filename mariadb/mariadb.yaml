@@ -57,6 +57,8 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 2
+            tcpSocket:
+              port: 3306
           env:
             - name: MARIADB_ROOT_PASSWORD
               valueFrom:
