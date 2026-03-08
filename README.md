@@ -72,7 +72,7 @@ kubectl -n defi-bot create secret generic init-influxdb2-cred \
 
 ```bash
 kubectl -n defi-bot create secret generic init-mariadb-cred \
-  --from-literal=host="mariadb.home.diecksystems.com" \
+  --from-literal=host="mariadb2.home.diecksystems.com" \
   --from-literal=namespace_host="mariadb" \
   --from-literal=port="3306" \
   --from-literal=database="defi-bot" \
