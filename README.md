@@ -50,17 +50,17 @@ https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/overview.htm
 ## InfluxDB
 
 ```bash
- kubectl -n crypto create secret generic influxcred \
+ kubectl -n defi-bot create secret generic influxcred \
     --from-literal=url="http://influxdb.home.diecksystems.com:8086" \
     --from-literal=token='CHANGEME'
 ```
 
 ```bash
-kubectl -n crypto create secret generic init-influxdb2-cred \
+kubectl -n defi-bot create secret generic init-influxdb2-cred \
   --from-literal=username="admin" \
   --from-literal=password="CHANGEME" \
-  --from-literal=org="crypto" \
-  --from-literal=bucket="1inch-dev" \
+  --from-literal=org="defi-bot" \
+  --from-literal=bucket="defi_trading" \
   --from-literal=retention="10y" \
   --from-literal=admin-token="CHANGEME"
 ```
@@ -68,7 +68,7 @@ kubectl -n crypto create secret generic init-influxdb2-cred \
 ## Redis
 
 ```bash
- kubectl -n crypto create secret generic rediscred \
+ kubectl -n defi-bot create secret generic rediscred \
   --from-literal=host="redis.home.diecksystems.com" \
   --from-literal=port="6379" \
   --from-literal=database="0" \
@@ -79,7 +79,7 @@ kubectl -n crypto create secret generic init-influxdb2-cred \
 ## Github
 
 ```bash
-kubectl -n crypto create secret generic ghcrcred \
+kubectl -n defi-bot create secret generic ghcrcred \
     --type=kubernetes.io/dockerconfigjson \
     --from-file=.dockerconfigjson=$HOME/Code/x86_cluster/ghcr.json
 ```
@@ -88,14 +88,14 @@ kubectl -n crypto create secret generic ghcrcred \
 Comma separated list of API keys
 
 ```bash
-kubectl -n crypto create secret generic oneinch-creds \
+kubectl -n defi-bot create secret generic oneinch-creds \
   --from-literal=tokens="[API TOKENS]" \
   --from-literal=url="https://api.1inch.dev"
 ```
 
 ## Wallet
 ```bash
- kubectl -n crypto create secret generic wallet-address-dev \
+ kubectl -n defi-bot create secret generic wallet-address-dev \
   --from-literal=address="[HEX ADDRESS]" \
   --from-literal=key="[PRIVATE KEY]"
 ```
